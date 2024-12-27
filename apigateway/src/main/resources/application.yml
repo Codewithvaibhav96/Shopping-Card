@@ -1,0 +1,101 @@
+server:
+  port: 8999
+
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/user/**
+          filters:
+            -name: CircuitBreaker
+            args:
+               name: user-service
+               fallbackuri: forward:/userServiceFallBack
+
+        - id: contact-service
+          uri: lb://contact-service
+          predicates:
+            - Path=/contact/**
+          filters:
+            -name: CircuitBreaker
+            args:
+              name: contact-service
+              fallbackuri: forward:/contactServiceFallBack
+
+        - id: catalog-service
+          uri: lb://catalog-service
+          predicates:
+            - Path=/api/catalog/**
+          filters:
+            -name: CircuitBreaker
+            args:
+              name: catalog-service
+              fallbackuri: forward:/catalogServiceFallBack
+
+        - id: inventory-service
+          uri: lb://inventory-service
+          predicates:
+            - Path=/api/inventory/**
+          filters:
+            -name: CircuitBreaker
+            args:
+              name: inventory-service
+              fallbackuri: forward:/inventoryServiceFallBack
+
+        - id: cart-service
+          uri: lb://cart-service
+          predicates:
+            - Path=/api/cart/**
+          filters:
+            -name: CircuitBreaker
+            args:
+              name: cart-service
+              fallbackuri: forward:/cartServiceFallBack
+
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/orders/**
+          filters:
+            -name: CircuitBreaker
+            args:
+              name: order-service
+              fallbackuri: forward:/ordersServiceFallBack
+
+        - id: customer-service
+          uri: lb://customer-service
+          predicates:
+            - Path=/api/customers/**
+          filters:
+            -name: CircuitBreaker
+            args:
+              name: customer-service
+              fallbackuri: forward:/customersServiceFallBack
+
+#hystrix:
+#  command:
+#    fallbackcmd:
+#      execution:
+#        isolation:
+#          thread:
+#            timeoutInMillieseconds: 5000
+#
+#management:
+#  endpoint:
+#    web:
+#      exposure:
+#        include: hystrix.stream
+
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/  # Ensure this points to your Eureka Server URL
+  instance:
+    prefer-ip-address: true  # Optional: Uses the IP address instead of hostname
